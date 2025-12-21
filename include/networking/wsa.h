@@ -1,6 +1,9 @@
 #ifdef _WIN32
+// clang-format off
+// 이 헤더들은 무조건 이 순서로 include 되어야만 함
 #include <winsock2.h>
 #include <windows.h>
+// clang-format on
 
 #include <string>
 #include <string_view>
@@ -33,6 +36,11 @@ class WSAErrorMsg {
   const char* fallback_ = nullptr;  // 실패 시 반환용
 };
 
+}  // namespace bedrock::network
+
+#endif
+namespace bedrock::network {
+
 struct WSAManager {
  public:
   WSAManager();
@@ -40,5 +48,3 @@ struct WSAManager {
 };
 
 }  // namespace bedrock::network
-
-#endif

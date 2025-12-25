@@ -16,11 +16,11 @@ int main() {
   bedrock::network::Socket sock(bedrock::network::SocketType::kTCP, addr);
   if (sock.Init() != bedrock::network::SocketErrorStatus::kSuccess) {
     std::cout << "Error: " << sock.GetErrorMessage() << std::endl;
-    std::exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
   if (sock.Connect() != bedrock::network::SocketErrorStatus::kSuccess) {
     std::cout << "Error: " << sock.GetErrorMessage() << std::endl;
-    std::exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
   std::cout << "Client is now connected to: " << static_cast<std::string>(addr)
             << std::endl;
@@ -39,7 +39,7 @@ int main() {
     auto read = sock.Read(BUFSIZ);
     if (read.status != bedrock::network::SocketErrorStatus::kSuccess) {
       std::cout << "Error: " << sock.GetErrorMessage() << std::endl;
-      std::exit(EXIT_FAILURE);
+      return EXIT_FAILURE;
     }
 
     std::cout << "Received: \""
@@ -49,5 +49,5 @@ int main() {
               << "\" from " << static_cast<std::string>(addr) << std::endl;
   }
 
-  std::exit(EXIT_SUCCESS);
+  return EXIT_SUCCESS;
 }

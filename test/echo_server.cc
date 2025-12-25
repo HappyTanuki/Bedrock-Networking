@@ -15,15 +15,15 @@ int main() {
   bedrock::network::Socket sock(bedrock::network::SocketType::kTCP, addr);
   if (sock.Init() != bedrock::network::SocketErrorStatus::kSuccess) {
     std::cout << "Error: " << sock.GetErrorMessage() << std::endl;
-    std::exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
   if (sock.Bind() != bedrock::network::SocketErrorStatus::kSuccess) {
     std::cout << "Error: " << sock.GetErrorMessage() << std::endl;
-    std::exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
   if (sock.Listen() != bedrock::network::SocketErrorStatus::kSuccess) {
     std::cout << "Error: " << sock.GetErrorMessage() << std::endl;
-    std::exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
   std::cout << "Server is now listening on: " << static_cast<std::string>(addr)
             << std::endl;
@@ -75,5 +75,5 @@ int main() {
     th.detach();
   }
 
-  std::exit(EXIT_SUCCESS);
+  return EXIT_SUCCESS;
 }

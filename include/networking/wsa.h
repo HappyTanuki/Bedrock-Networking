@@ -1,3 +1,4 @@
+#include "common/interfaces.h"
 #ifdef _WIN32
 // clang-format off
 // 이 헤더들은 무조건 이 순서로 include 되어야만 함
@@ -42,10 +43,15 @@ class WSAErrorMsg {
 
 namespace bedrock::network {
 
-struct WSAManager {
+struct WSAManager : public Validatable {
  public:
   WSAManager();
-  ~WSAManager();
+  ~WSAManager() override;
+
+  bool IsValid() const override { return valid; }
+
+ private:
+  bool valid = false;
 };
 
 }  // namespace bedrock::network

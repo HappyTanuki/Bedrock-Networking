@@ -2,6 +2,7 @@
 #include <future>
 #include <iostream>
 #include <mutex>
+#include <span>
 #include <string>
 #include <thread>
 
@@ -88,12 +89,8 @@ int ServerProcess(bedrock::network::Socket sock) {
   sock.Write(ret_read.data.first);
 
   cout_mutex.lock();
-  std::cout << "[Server]: Echoed \""
-            << std::string(
-                   reinterpret_cast<const char*>(ret_read.data.first.data()),
-                   ret_read.data.first.size())
-            << "\""
-            << " to :" << static_cast<std::string>(sock.GetAddr().data)
+  std::cout << "[Server]: Echoed " << ret_read.data.first.size() << "bytes "
+            << "to :" << static_cast<std::string>(sock.GetAddr().data)
             << std::endl;
   cout_mutex.unlock();
 
@@ -115,14 +112,13 @@ int ClientProcess(std::uint16_t port) {
   std::cout << "[Client]: Client is now talking to: "
             << static_cast<std::string>(addr) << std::endl;
   cout_mutex.unlock();
-  std::string input = "Test string.";
 
-  auto bytes = std::as_bytes(std::span(input));
+  std::vector<std::byte> bytes(8192, static_cast<std::byte>(0xAA));
 
   sock.Write(bytes);
 
   cout_mutex.lock();
-  std::cout << "[Client]: Sent: " << input << std::endl;
+  std::cout << "[Client]: Sent " << bytes.size() << "bytes." << std::endl;
   cout_mutex.unlock();
 
   auto read = sock.Read(BUFSIZ);
@@ -134,12 +130,13 @@ int ClientProcess(std::uint16_t port) {
   }
 
   cout_mutex.lock();
-  std::cout << "[Client]: Received: \""
-            << std::string(
-                   reinterpret_cast<const char*>(read.data.first.data()),
-                   read.data.first.size())
-            << "\" from " << static_cast<std::string>(addr) << std::endl;
+  std::cout << "[Client]: Received: " << read.data.second << "bytes from "
+            << static_cast<std::string>(addr) << std::endl;
   cout_mutex.unlock();
 
-  return EXIT_SUCCESS;
+  if (read.data.first == bytes) {
+    return EXIT_SUCCESS;
+  } else {
+    return EXIT_FAILURE;
+  }
 }

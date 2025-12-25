@@ -92,6 +92,10 @@ SocketErrorStatus Socket::Bind() {
     last_error_message = GetSocketErrorMessage(last_errno);
     return SocketErrorStatus::kFailure;
   }
+  ::sockaddr_storage bound;
+  ::socklen_t len = sizeof(bound);
+  ::getsockname(socket_fd, reinterpret_cast<sockaddr*>(&bound), &len);
+  addr.SetAddr(bound);
 
   return SocketErrorStatus::kSuccess;
 }

@@ -1,0 +1,60 @@
+#include <cstdlib>
+#include <iostream>
+#include <string>
+#include <thread>
+
+#include "networking/address.h"
+#include "networking/socket.h"
+#include "networking/wsa.h"
+
+int main() {
+  bedrock::network::WSAManager wsamanager;
+  bedrock::network::Address addr;
+  addr.SetAddr(bedrock::network::IPVersion::kIPV6, "::", 8008);
+
+  bedrock::network::Socket sock(bedrock::network::SocketType::kUDP, addr);
+  if (sock.Init() != bedrock::network::SocketErrorStatus::kSuccess) {
+    std::cout << "Error: " << sock.GetErrorMessage() << std::endl;
+    return EXIT_FAILURE;
+  }
+  if (sock.Bind() != bedrock::network::SocketErrorStatus::kSuccess) {
+    std::cout << "Error: " << sock.GetErrorMessage() << std::endl;
+    return EXIT_FAILURE;
+  }
+  std::cout << "Server is now listening on: " << static_cast<std::string>(addr)
+            << std::endl;
+  while (true) {
+    auto ret_read = sock.Read(BUFSIZ);
+
+    if (ret_read.status == bedrock::network::SocketErrorStatus::kDisconnect) {
+      std::cout << "Info: Peer disconnected" << std::endl;
+      break;
+    } else if (ret_read.status !=
+               bedrock::network::SocketErrorStatus::kSuccess) {
+      std::cout << "Error: " << sock.GetErrorMessage() << std::endl;
+      break;
+    }
+    std::cout << "Received from: "
+              << static_cast<std::string>(sock.GetAddr().data) << std::endl;
+
+    if (ret_read.data.first.size() != ret_read.data.second) {
+      ret_read.data.first.resize(ret_read.data.second);
+    }
+
+    if (ret_read.data.first.size() == 0) {
+      break;
+    }
+
+    sock.Write(ret_read.data.first);
+
+    std::cout << "Echoed \""
+              << std::string(
+                     reinterpret_cast<const char*>(ret_read.data.first.data()),
+                     ret_read.data.first.size())
+              << "\""
+              << " to :" << static_cast<std::string>(sock.GetAddr().data)
+              << std::endl;
+  }
+
+  return EXIT_SUCCESS;
+}

@@ -9,22 +9,33 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if(NOT DEFINED ROOT_PROJECT_NAME)
     set(ROOT_PROJECT_NAME "Root")
-    include(FetchContent)
-    FetchContent_Declare(
-        Common
-        GIT_REPOSITORY https://github.com/HappyTanuki/Bedrock-Common.git
-        GIT_TAG master
-        GIT_SHALLOW ON
-    )
-    FetchContent_MakeAvailable(Common)
 endif()
+
+include(FetchContent)
+
+FetchContent_Declare(
+    Common
+    GIT_REPOSITORY https://github.com/HappyTanuki/Bedrock-Common.git
+    GIT_TAG master
+    GIT_SHALLOW ON
+)
+FetchContent_MakeAvailable(Common)
+
+FetchContent_Declare(
+    Encryption
+    GIT_REPOSITORY https://github.com/HappyTanuki/Bedrock-Encryption.git
+    GIT_TAG master
+    GIT_SHALLOW ON
+)
+FetchContent_MakeAvailable(Encryption)
 
 file(GLOB_RECURSE SOURCES "src/*.cc")
 
 add_library(${SUB_PROJECT_NAME} SHARED ${SOURCES})
 target_link_libraries(${SUB_PROJECT_NAME} PUBLIC ${ROOT_PROJECT_NAME}::Common)
+target_link_libraries(${SUB_PROJECT_NAME} PUBLIC ${ROOT_PROJECT_NAME}::Encryption)
 
-if(DEFINED ROOT_PROJECT_NAME)
+if(DEFINED ROOT_PROJECT_NAME AND NOT "${ROOT_PROJECT_NAME}" STREQUAL "Root")
     add_library(${ROOT_PROJECT_NAME}::${SUB_PROJECT_NAME} ALIAS ${SUB_PROJECT_NAME})
 endif()
 
@@ -38,7 +49,6 @@ if(UNIX AND NOT APPLE AND CMAKE_BUILD_TYPE STREQUAL "Release")
         BUILD_RPATH "$ORIGIN"
     )
 endif()
-
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     # Additional flags for GCC
@@ -70,23 +80,18 @@ if (PROJECT_IS_TOP_LEVEL AND CMAKE_EXPORT_COMPILE_COMMANDS)
   )
 endif()
 
-option(BEDROCK_NETWORKING_BUILD_TESTS
-  "Build Bedrock tests"
-  ${PROJECT_IS_TOP_LEVEL}
-)
-
-if (BEDROCK_NETWORKING_BUILD_TESTS)
+if (${PROJECT_IS_TOP_LEVEL})
   set(BUILD_TESTING ON)
 
   include(CTest)
   enable_testing()
 
   add_subdirectory(test)
-endif()
 
-add_custom_command(TARGET ${SUB_PROJECT_NAME} POST_BUILD
+  add_custom_command(TARGET ${SUB_PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "$<TARGET_FILE:${SUB_PROJECT_NAME}>"
         "${CMAKE_BINARY_DIR}/test"
     COMMENT "Copying ${SUB_PROJECT_NAME} DLL/so to test output directory"
-)
+  )
+endif()

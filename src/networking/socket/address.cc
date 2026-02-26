@@ -1,4 +1,4 @@
-#include "networking/address.h"
+#include "networking/socket/address.h"
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -199,8 +199,8 @@ Address::operator DataWithStatus<std::string, AddressErrorStatus>() {
 }
 
 Address::operator std::string() {
-  auto result = static_cast<DataWithStatus<
-      std::string, AddressErrorStatus>>(*this);
+  auto result =
+      static_cast<DataWithStatus<std::string, AddressErrorStatus>>(*this);
 
   if (result.status != AddressErrorStatus::kSuccess) {
     return "";
@@ -233,8 +233,7 @@ Address::operator ::sockaddr_in6() const {
   return *reinterpret_cast<const ::sockaddr_in6*>(&addr);
 }
 
-DataWithStatus<IPVersion, AddressErrorStatus> Address::GetIPVersion()
-    const {
+DataWithStatus<IPVersion, AddressErrorStatus> Address::GetIPVersion() const {
   if (IsValid()) {
     return {ip_version, AddressErrorStatus::kSuccess};
   } else {
@@ -242,8 +241,7 @@ DataWithStatus<IPVersion, AddressErrorStatus> Address::GetIPVersion()
   }
 }
 
-DataWithStatus<std::uint16_t, AddressErrorStatus> Address::GetPort()
-    const {
+DataWithStatus<std::uint16_t, AddressErrorStatus> Address::GetPort() const {
   switch (ip_version) {
     case IPVersion::kIPV4:
       return {::ntohs(reinterpret_cast<const ::sockaddr_in*>(&addr)->sin_port),

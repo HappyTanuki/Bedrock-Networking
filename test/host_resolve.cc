@@ -1,8 +1,7 @@
 #include <iostream>
 #include <string>
 
-#include "networking/address.h"
-#include "networking/wsa.h"
+#include "networking/networking.h"
 
 int main() {
   bedrock::network::WSAManager wsamanager;

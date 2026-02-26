@@ -11,9 +11,9 @@
 #error "이 플랫폼은 지원되지 않습니다."
 #endif
 
-#include "address.h"
 #include "common/interfaces.h"
-#include "socket_error_handle.h"
+#include "socket/address.h"
+#include "socket/socket_error_handle.h"
 
 namespace bedrock::network {
 
@@ -46,7 +46,7 @@ class Socket : public Validatable,
   Socket(SocketType socket_type, const Address& address) {
     SetAddr(socket_type, address);
   }
-  ~Socket() override;
+  virtual ~Socket() override;
 
   SocketErrorStatus Init();
   SocketErrorStatus Init(int fd);

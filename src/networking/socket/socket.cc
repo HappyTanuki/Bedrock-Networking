@@ -12,9 +12,6 @@
 
 #include <vector>
 
-#include "networking/address.h"
-#include "networking/socket_error_handle.h"
-
 namespace bedrock::network {
 
 Socket::Socket(Socket&& other) noexcept {

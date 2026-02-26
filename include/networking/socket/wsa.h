@@ -1,4 +1,5 @@
 #include "common/interfaces.h"
+
 #ifdef _WIN32
 // clang-format off
 // 이 헤더들은 무조건 이 순서로 include 되어야만 함
@@ -43,6 +44,8 @@ class WSAErrorMsg {
 
 namespace bedrock::network {
 
+// WINSOCK 초기화 및 정리 관리를 위한 RAII 클래스
+// 이 클래스는 윈도우 이외 플랫폼에서는 빈 구현으로 대체됩니다.
 struct WSAManager : public Validatable {
  public:
   WSAManager();

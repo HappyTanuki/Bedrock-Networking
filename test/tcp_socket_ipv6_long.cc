@@ -5,9 +5,7 @@
 #include <string>
 #include <thread>
 
-#include "networking/address.h"
-#include "networking/socket.h"
-#include "networking/wsa.h"
+#include "networking/networking.h"
 
 static std::mutex cout_mutex;
 

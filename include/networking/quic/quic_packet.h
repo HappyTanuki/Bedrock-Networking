@@ -1,5 +1,5 @@
-#ifndef BEDROCK_NETWORKING_NETWORKING_QUIC_PACKET_H_
-#define BEDROCK_NETWORKING_NETWORKING_QUIC_PACKET_H_
+#ifndef BEDROCK_NETWORKING_NETWORKING_QUIC_QUIC_PACKET_H_
+#define BEDROCK_NETWORKING_NETWORKING_QUIC_QUIC_PACKET_H_
 
 #include <cstdint>
 #include <span>
@@ -20,6 +20,9 @@ struct QuicPacketBase : public QuicPacketRawData {
   std::uint8_t VersionSpecificBits() const;
 };
 
+// QUIC Packet Header Types
+// refer to rfc8999
+
 // Long Header Packet {
 //   Header Form (1) = 1,
 //   Version-Specific Bits (7),
@@ -30,10 +33,11 @@ struct QuicPacketBase : public QuicPacketRawData {
 //   Source Connection ID (0..2040),
 //   Version-Specific Data (..),
 // }
-struct LongQuicPacketHeader : public QuicPacketBase {
+struct QuicLongPacketHeader : public QuicPacketBase {
  public:
   // bool HeaderForm() const;
   // std::uint8_t VersionSpecificBits() const;
+
   std::uint32_t Version() const;
   std::uint8_t DestinationConnectionIDLength() const;
   std::span<const std::uint8_t> DestinationConnectionID() const;
@@ -52,10 +56,11 @@ struct LongQuicPacketHeader : public QuicPacketBase {
 //   Source Connection ID (0..2040),
 //   Supported Version (32) ...,
 // }
-struct VersionNegotiationQuicPacket : public QuicPacketBase {
+struct QuicVersionNegotiationPacket : public QuicPacketBase {
  public:
   // bool HeaderForm() const;
   // std::uint8_t VersionSpecificBits() const;
+
   std::uint32_t Version() const;
   std::uint8_t DestinationConnectionIDLength() const;
   std::span<const std::uint8_t> DestinationConnectionID() const;
@@ -70,10 +75,12 @@ struct VersionNegotiationQuicPacket : public QuicPacketBase {
 //   Destination Connection ID (..),
 //   Version-Specific Data (..),
 // }
-struct ShortQuicPacketHeader : public QuicPacketBase {
+struct QuicShortPacketHeader : public QuicPacketBase {
  public:
+  virtual ~QuicShortPacketHeader();
   // bool HeaderForm() const;
   // std::uint8_t VersionSpecificBits() const;
+
   virtual std::span<const std::uint8_t> DestinationConnectionID() const = 0;
   virtual std::span<const std::uint8_t> VersionspecificData() const = 0;
 };

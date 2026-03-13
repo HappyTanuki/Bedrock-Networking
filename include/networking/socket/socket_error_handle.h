@@ -19,6 +19,7 @@
 #endif
 
 #include <string>
+#include "networking/socket/wsa.h"
 
 namespace bedrock {
 

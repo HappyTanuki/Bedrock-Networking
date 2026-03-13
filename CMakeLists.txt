@@ -70,14 +70,13 @@ if(CLANG_TIDY_EXE)
     set(CMAKE_CXX_CLANG_TIDY
     $<$<COMPILE_LANGUAGE:CXX>:clang-tidy;-checks=-*,google-readability-casting;-fix;-fix-errors>
 )
-endif()
-
-if (PROJECT_IS_TOP_LEVEL AND CMAKE_EXPORT_COMPILE_COMMANDS)
-  execute_process(
-    COMMAND ${CMAKE_COMMAND} -E create_symlink
-            ${CMAKE_BINARY_DIR}/compile_commands.json
-            ${CMAKE_BINARY_DIR}/../compile_commands.json
-  )
+    if (PROJECT_IS_TOP_LEVEL AND CMAKE_EXPORT_COMPILE_COMMANDS)
+      execute_process(
+        COMMAND ${CMAKE_COMMAND} -E create_symlink
+                ${CMAKE_BINARY_DIR}/compile_commands.json
+                ${CMAKE_BINARY_DIR}/../compile_commands.json
+      )
+    endif()
 endif()
 
 if (${PROJECT_IS_TOP_LEVEL})

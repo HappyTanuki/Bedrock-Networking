@@ -4,6 +4,7 @@
 #ifdef _WIN32
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include "networking/socket/wsa.h"
 #elif __linux__
 #include <arpa/inet.h>
 #include <netdb.h>
@@ -23,7 +24,6 @@
 namespace bedrock {
 
 #ifdef _WIN32
-#include "networking/wsa.h"
 inline int GetSocketLastErrorCode() { return WSAGetLastError(); }
 inline std::string GetSocketErrorMessage(int err) {
   return bedrock::network::WSAErrorMsg(err).str();

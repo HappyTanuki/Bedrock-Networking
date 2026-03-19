@@ -17,6 +17,7 @@
 
 namespace bedrock::network {
 
+// 소켓 타입
 enum class SocketType : std::uint16_t {
   kInvalid,
   kTCP = SOCK_STREAM,
@@ -25,11 +26,11 @@ enum class SocketType : std::uint16_t {
 };
 
 enum class SocketErrorStatus {
-  kSuccess,
-  kFailure,
-  kInternal,
-  kAddress,
-  kDisconnect
+  kSuccess,    // 성공
+  kFailure,    // 실패 (에러 메시지 참조)
+  kInternal,   // 소켓 내부 상태가 통신할 수 없는 상태임
+  kAddress,    // 주소가 부적절함
+  kDisconnect  // 연결이 끊어짐
 };
 
 class Socket : public Validatable,

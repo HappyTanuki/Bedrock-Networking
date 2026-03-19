@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <vector>
 
 #include "networking/quic/rfc9000.h"
@@ -166,6 +166,8 @@ int main() {
   data[0] |= 0b11000000;
   variable_integer.SetValue(data, size);
   stored_val = variable_integer.GetValue();
+
+  std::cout << "Endian test passed." << std::endl;
 
   return 0;
 }

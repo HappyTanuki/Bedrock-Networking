@@ -1,14 +1,16 @@
-#include "networking/socket/wsa.h"
+﻿#include "networking/socket/wsa.h"
 
 namespace bedrock::network {
+
+bool WSAManager::valid = false;
 
 WSAManager::WSAManager() {
 #ifdef _WIN32
   WSADATA wsa;
   if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
-    valid = false;
+      valid = false;
   } else {
-    valid = true;
+      valid = true;
   }
 #endif
 }

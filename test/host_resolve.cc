@@ -1,10 +1,10 @@
-#include <iostream>
+﻿#include <iostream>
 #include <string>
 
 #include "networking/networking.h"
 
 int main() {
-  bedrock::network::WSAManager wsamanager;
+  bedrock::network::WSAManager::Instantiate();
   bedrock::network::Address addr;
   addr.SetAddr("happytanuki.kr", "8001");
 

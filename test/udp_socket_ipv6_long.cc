@@ -1,4 +1,4 @@
-#include <cstdlib>
+﻿#include <cstdlib>
 #include <future>
 #include <iostream>
 #include <mutex>
@@ -14,7 +14,7 @@ int ServerProcess(bedrock::network::Socket sock);
 int ClientProcess(std::uint16_t port);
 
 int main() {
-  bedrock::network::WSAManager wsamanager;
+  bedrock::network::WSAManager::Instantiate();
 
   bedrock::network::Address addr;
   addr.SetAddr(bedrock::network::IPVersion::kIPV6, "::", 0);

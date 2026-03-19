@@ -1,11 +1,11 @@
-#include "networking/quic/rfc9000.h"
+﻿#include "networking/quic/rfc9000.h"
 
 #include <span>
 
-#ifndef WIN32
-#include <arpa/inet.h>
-#else
+#ifdef _WIN32
 #include <winsock.h>
+#else
+#include <arpa/inet.h>
 #endif
 #include <cstring>
 

@@ -48,10 +48,17 @@ namespace bedrock::network {
 // 이 클래스는 윈도우 이외 플랫폼에서는 빈 구현으로 대체됩니다.
 struct WSAManager {
  public:
+#if defined(__clang__)
+  #pragma clang diagnostic push
+  #pragma clang diagnostic ignored "-Wexit-time-destructors"
+#endif
   static void Instantiate() {
-      static WSAManager instance;
-      return;
+    static WSAManager instance;
+    return;
   }
+#if defined(__clang__)
+  #pragma clang diagnostic pop
+#endif
 
   static bool valid;
 

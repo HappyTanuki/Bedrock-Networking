@@ -1,0 +1,68 @@
+name: OnMasterReleasePush
+
+on:
+  push:
+    branches: [ master, release ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      # - name: Build
+      #   run: go build -o build/ cmd/client/main.go
+  notify-parent:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Generate SECRET_KEY pem key file
+        run: echo "${{ secrets.SECRET_KEY }}" > SECRET_KEY.pem
+      - name: Generate Github JWT
+        # This script will set GITHUB_JWT environment variable
+        # APP_ID=3586163
+        run: |
+          chmod +x ./.github/scripts/GenerateGithubJWT.sh
+          ./.github/scripts/GenerateGithubJWT.sh 3586163 SECRET_KEY.pem
+        shell: bash
+      - name: Get installation
+        id: install_raw
+        run: |
+          RESPONSE=$(curl -s -L \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GITHUB_JWT" \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            https://api.github.com/users/HappyTanuki/installation)
+
+          echo "json="$RESPONSE"" >> $GITHUB_OUTPUT
+      - name: Extract installation id
+        id: install
+        run: echo "id=${{ fromJson(steps.install_raw.outputs.json).id }}" >> $GITHUB_OUTPUT
+      - name: Get installation token
+        id: token_raw
+        run: |
+          RESPONSE=$(curl -s -X POST \
+            -H "Authorization: Bearer $GITHUB_JWT" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            https://api.github.com/app/installations/${{ steps.install.outputs.id }}/access_tokens)
+
+          echo "json="$RESPONSE"" >> $GITHUB_OUTPUT
+      - name: Extract token
+        id: token
+        run: echo "INSTALLATION_TOKEN=${{ fromJson(steps.token_raw.outputs.json).token }}" >> $GITHUB_ENV
+      - name: Trigger parent repo
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer $INSTALLATION_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            https://api.github.com/repos/HappyTanuki/Bedrock/dispatches \
+            -d '{
+            "event_type":"submodule_updated",
+              "client_payload": {
+                "branch": "${{ github.ref_name }}"
+              }
+            }'

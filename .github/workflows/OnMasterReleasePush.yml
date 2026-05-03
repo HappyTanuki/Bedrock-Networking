@@ -25,7 +25,7 @@ jobs:
           app-id: 3586163
           private-key: ${{ secrets.SECRET_KEY }}
           owner: HappyTanuki
-          repositories: Bedrock        # 토큰 권한을 이 레포로 한정
+          repositories: Bedrock       # 토큰 권한을 이 레포로 한정
       - name: Trigger parent repo
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}

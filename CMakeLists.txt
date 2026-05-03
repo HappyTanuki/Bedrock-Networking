@@ -27,6 +27,7 @@ if(NOT DEFINED ROOT_PROJECT_NAME)
     set(ROOT_PROJECT_NAME "Root")
 endif()
 
+if(NOT TARGET Common)
 FetchContent_Declare(
     Common
     GIT_REPOSITORY https://github.com/HappyTanuki/Bedrock-Common.git
@@ -34,7 +35,9 @@ FetchContent_Declare(
     GIT_SHALLOW    ON
 )
 FetchContent_MakeAvailable(Common)
+endif()
 
+if(NOT TARGET Encryption)
 FetchContent_Declare(
     Encryption
     GIT_REPOSITORY https://github.com/HappyTanuki/Bedrock-Encryption.git
@@ -42,6 +45,7 @@ FetchContent_Declare(
     GIT_SHALLOW ON
 )
 FetchContent_MakeAvailable(Encryption)
+endif()
 
 # ============================================================
 # Target – Networking
@@ -72,7 +76,18 @@ if (TARGET ${SUB_PROJECT_NAME})
         "${CMAKE_CURRENT_SOURCE_DIR}/include/networking/pch.h"
     )
     if(MSVC)
-        target_compile_options(${SUB_PROJECT_NAME} PRIVATE /MP)
+        target_compile_options(${SUB_PROJECT_NAME} PRIVATE
+        /MP
+        /W4              # 합리적인 모든 경고
+        /WX              # 경고를 에러로 (Linux의 -Werror)
+        /permissive-     # 표준 엄격 모드 (Microsoft 확장 거부)
+        /w14242 /w14254 /w14263 /w14265 /w14287 /we4289
+        /w14296 /w14311 /w14545 /w14546 /w14547 /w14549
+        /w14555 /w14619 /w14640 /w14826 /w14905 /w14906
+        /w14928
+        /Zc:__cplusplus  # __cplusplus 매크로 정확히 보고
+        /Zc:preprocessor # 표준 준수 전처리기
+        )
     endif()
 endif()
 
@@ -165,3 +180,6 @@ if (${PROJECT_IS_TOP_LEVEL})
     COMMENT "Copying ${SUB_PROJECT_NAME} DLL/so to test output directory"
   )
 endif()
+
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/.cmake/cmake_include/config.h.in" "${CMAKE_CURRENT_BINARY_DIR}/config.h" @ONLY)
+target_include_directories(${SUB_PROJECT_NAME} SYSTEM PUBLIC "${CMAKE_CURRENT_BINARY_DIR}")

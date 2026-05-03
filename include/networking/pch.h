@@ -8,8 +8,10 @@
 #include <windows.h>
 #endif
 
+#if ENCRYPTION_USE_OPENSSL
 // OpenSSL heavy header included transitively by encryption interfaces
 #include <openssl/evp.h>
+#endif
 
 // Common STL headers used across the project
 #include <string>

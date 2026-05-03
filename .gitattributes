@@ -1,0 +1,19 @@
+# Default: let git decide on text files
+* text=auto
+
+# Shell scripts must always use LF (run on Linux)
+*.sh text eol=lf
+
+# Other Linux/CI files
+Dockerfile text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Windows-only batch files
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files (don't touch)
+*.png binary
+*.jpg binary
+*.pem binary

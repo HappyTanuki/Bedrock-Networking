@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 client_id=$1 # Client ID as first argument
 

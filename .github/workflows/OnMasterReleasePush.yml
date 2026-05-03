@@ -26,7 +26,6 @@ jobs:
         run: |
           chmod +x ./.github/scripts/GenerateGithubJWT.sh
           ./.github/scripts/GenerateGithubJWT.sh 3586163 SECRET_KEY.pem
-        shell: bash
       - name: Get installation
         id: install_raw
         run: |
